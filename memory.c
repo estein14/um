@@ -44,3 +44,13 @@ Seq_T readFile(File *fp, int num_instructions)
 
     return obj;
 }
+
+Memory
+
+
+
+
+
+
+
+
