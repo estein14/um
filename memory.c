@@ -1,13 +1,7 @@
 #include "memory.h"
 
-typedef struct Memory {
-    Seq_T segments;
-    Seq_T reusable;
-    int pSize;
-} Memory;
-
 // constructor for our main memory
-Memory Memory_new(File *fp, int num_instructions)
+Memory Memory_new(FILE *fp, int num_instructions)
 {
     assert(fp != NULL);
 
@@ -15,23 +9,51 @@ Memory Memory_new(File *fp, int num_instructions)
 
     assert(main != NULL);
 
-    main->segments = readFile(fp);
+    main->segments = readFile(fp, num_instructions);
     main->reusable = Seq_new(0);
     main->pSize = num_instructions;
 
     return main;
 }
 
+void print_instructions(Memory memory, int num_instructions)
+{
+
+    uint32_t *array = (uint32_t *)Seq_get(memory->segments, 0);
+    for (int i = 0; i < num_instructions; i++) {
+        printf("%x\n", array[i]);
+    }
+    
+}
+
+void Memory_free(Memory memory)
+{
+    assert(memory != NULL);
+    
+    Seq_free(&(memory->reusable));
+    
+    int length = Seq_length(memory->segments);
+    for (int i = 0; i < length; i++) {
+        free(Seq_get(memory->segments, i));
+    }
+    
+    Seq_free(&(memory->segments));
+    free(memory);
+    
+}
 
 /*
     Reads file into first segment in sequence
  */
-Seq_T readFile(File *fp, int num_instructions)
+Seq_T readFile(FILE *fp, int num_instructions)
 {
-    Seq_T obj = Seq_new(0);
+
+    Seq_T obj = Seq_new(10);
+
     uint32_t *segment = malloc(sizeof(uint32_t) * num_instructions);
     uint32_t word;
 
+    
     for (int i = 0; i < num_instructions; i++) {
         for (int j = 24; j >= 0; j-=8) {
             int c = getc(fp);
@@ -39,8 +61,62 @@ Seq_T readFile(File *fp, int num_instructions)
         }
         segment[i] = (uint32_t)word;
     }
+    
+    
+    int *x = Seq_addlo(obj, segment);
+    (void)x;
 
-    Seq_put(obj, 0, segment);
 
     return obj;
 }
+
+void mapSegment(Memory memory, int hint)
+{
+    
+
+    //TODO: Check if reuasable elements are available
+    
+    
+    uint32_t *segment = malloc(sizeof(uint32_t) * hint);
+    for (int i = 0; i < hint; i++) {
+        segment[i] = 0;
+    }
+    
+    Seq_addhi(memory->segments, segment);
+    
+    // TODO: map bit pattern of non-zeros?
+
+}
+
+
+
+int main(int argc, char *argv[])
+{
+    (void)argc;
+    
+    struct stat stats;
+    stat(argv[1], &stats);
+    int num_instructions = stats.st_size / 4;
+    
+    FILE *fp = fopen(argv[1], "rb");
+    
+    Memory object = Memory_new(fp, num_instructions);
+    
+    print_instructions(object, num_instructions);
+    
+    mapSegment(object, 10);
+    
+    Memory_free(object);
+    
+    
+    
+    return 0;
+}
+
+
+
+
+
+
+
+

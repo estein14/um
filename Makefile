@@ -6,13 +6,16 @@ CC = gcc
 IFLAGS  = -I/comp/40/build/include -I/usr/sup/cii40/include/cii
 CFLAGS  = -g -std=gnu99 -Wall -Wextra -Werror -pedantic $(IFLAGS)
 LDFLAGS = -g -L/comp/40/build/lib -L/usr/sup/cii40/lib64
-LDLIBS  = -l40locality -lcii40 -lm -lbitpack
+LDLIBS  = -lbitpack -l40locality -lcii40 -lcii -lm -lum-dis
 
 EXECS   = writetests
 
 all: $(EXECS)
 
 writetests: umlabwrite.o umlab.o
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+	
+memory: memory.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 um: um.o memory.o
