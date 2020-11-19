@@ -70,7 +70,6 @@ Seq_T readFile(FILE *fp, int num_instructions)
     return obj;
 }
 
-<<<<<<< HEAD
 void mapSegment(Memory memory, int hint)
 {
     
@@ -113,9 +112,6 @@ int main(int argc, char *argv[])
     
     return 0;
 }
-=======
-Memory
->>>>>>> 443dad61b1cc6a55d145c57475159432e6ed0efc
 
 
 
