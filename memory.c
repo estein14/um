@@ -48,6 +48,9 @@ void Memory_free(Memory memory)
 Seq_T readFile(FILE *fp, int num_instructions)
 {
 
+
+    // TODO: Check to make sure there are no remaining bits and all of the words
+    // are the correct amount of bits
     Seq_T obj = Seq_new(10);
 
     uint32_t *segment = malloc(sizeof(uint32_t) * num_instructions);
