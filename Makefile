@@ -18,7 +18,7 @@ writetests: umlabwrite.o umlab.o
 memory: memory.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-um: um.o memory.o
+um: um.o memory.o run.o functions.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 # To get *any* .o file, compile its .c file with the following rule.

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "memory.h"
+#include "run.h"
 
 int main(int argc, char*argv[])
 {
@@ -13,18 +14,27 @@ int main(int argc, char*argv[])
     stat(argv[1], &stats);
     int num_instructions = stats.st_size / 4;
 
-    File *fp = fopen(argv[1], "rb");
+    FILE *fp = fopen(argv[1], "rb");
 
     if (fp == NULL) {
-        fprintf(stderr, "Could not open file.\n")
+        fprintf(stderr, "Could not open file.\n");
         exit(EXIT_FAILURE);
     }
 
     Memory mem = Memory_new(fp, num_instructions);
 
-    Run_program(mem);
+    
+//    print_instructions(mem, num_instructions);
+    
+    
+    
+    runProgram(mem);
+    
+    
+    
+    
 
-    Memory_clear(&mem);
+    Memory_free(mem);
     exit(EXIT_SUCCESS);
 
 }

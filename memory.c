@@ -34,7 +34,9 @@ void Memory_free(Memory memory)
     
     int length = Seq_length(memory->segments);
     for (int i = 0; i < length; i++) {
-        free(Seq_get(memory->segments, i));
+        if (Seq_get(memory->segments, i) != NULL) {
+            free(Seq_get(memory->segments, i));
+        }
     }
     
     Seq_free(&(memory->segments));
@@ -92,29 +94,42 @@ void mapSegment(Memory memory, int hint)
 }
 
 
-
-int main(int argc, char *argv[])
+void unmapSegment(Memory memory, uint32_t id)
 {
-    (void)argc;
-    
-    struct stat stats;
-    stat(argv[1], &stats);
-    int num_instructions = stats.st_size / 4;
-    
-    FILE *fp = fopen(argv[1], "rb");
-    
-    Memory object = Memory_new(fp, num_instructions);
-    
-    print_instructions(object, num_instructions);
-    
-    mapSegment(object, 10);
-    
-    Memory_free(object);
+    // TODO: Error checking and bounds
+    uint32_t *segment = (uint32_t*)Seq_get(memory->segments, id);
+    free(segment);
+    Seq_put(memory->segments, id, NULL);
+    Seq_addlo(memory->reusable, (void*)(uintptr_t)id);
     
     
-    
-    return 0;
 }
+
+
+
+// int main(int argc, char *argv[])
+// {
+//     (void)argc;
+// 
+//     struct stat stats;
+//     stat(argv[1], &stats);
+//     int num_instructions = stats.st_size / 4;
+// 
+//     FILE *fp = fopen(argv[1], "rb");
+// 
+//     Memory object = Memory_new(fp, num_instructions);
+// 
+//     print_instructions(object, num_instructions);
+//     unmapSegment(object, 0);
+// 
+//     mapSegment(object, 10);
+// 
+//     Memory_free(object);
+// 
+// 
+// 
+//     return 0;
+// }
 
 
 

@@ -10,7 +10,18 @@
  #ifndef RUN_H
  #define RUN_H
  
- void 
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdint.h>
+ #include <sys/stat.h>
+ #include "bitpack.h"
+ #include "functions.h"
+ #include "memory.h"
+ #include "assert.h"
+ #include <seq.h>
+ 
+ 
+ void runProgram(Memory memory);
  
  
  

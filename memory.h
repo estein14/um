@@ -24,11 +24,12 @@ typedef struct Memory {
     int pSize;
 }*Memory;
 
-
 Memory Memory_new(FILE *fp, int num_instructions);
 Seq_T readFile(FILE *fp, int num_instructions);
 void Memory_free(Memory memory);
 void mapSegment(Memory memory, int hint);
+void unmapSegment(Memory memory, uint32_t id);
+void print_instructions(Memory memory, int num_instructions);
 
 
 #endif
