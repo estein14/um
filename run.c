@@ -31,7 +31,7 @@
      uint32_t pcounter = 0;
      uint32_t reg[8];
      Um_opcode code;
-     uint32_t curr_instr;
+     Um_instruction curr_instr;
      int rA;
      int rB;
      int rC;
@@ -45,6 +45,8 @@
         rA = Bitpack_getu((uint64_t)curr_instr, 3, 6);
         rB = Bitpack_getu((uint64_t)curr_instr, 3, 3);
         rC = Bitpack_getu((uint64_t)curr_instr, 3, 0);
+        
+        printf("rA = %d, rB = %d, rC = %d\n", rA, rB, rC);
         
         printf("%d\n", code);
         

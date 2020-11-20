@@ -1,0 +1,48 @@
+UNBLACKEDGES
+QUESTIONS
+By:
+Noah Wright (nwrigh05)
+Emmett Stein (estein14)
+
+Please put answers to questions here.
+
+  1. What fraction of time is spent in I/O as compared with removing
+     black edges?
+  
+ Answer:
+	We found that pbmread used 31.56% of the total instructions calls,
+	and pbmwrite ues 25.32%. In total, the I/O takes 56.88%
+	
+	Removing the black edges takes 43.10% of the total instructions.
+	
+ 2. How long does
+  
+        time ./unblackedges 
+  
+     take?
+Answer:
+	It said that it took about 1.13 seconds in total to run the program.  
+
+  3. After making changes requested in the lab handout (steps 1-4), what
+     happened to the total time?
+  
+Answer:
+	The total time went from 1.13 seconds, to 1.07 seconds.
+	 (It fluctuated everytime we ran it, so we're not totaly
+	 sure if the change is significant.
+
+  4. What happened to the fraction of time spent in Bit_put?
+
+Answer:
+	The fraction went from 7.34% fo the total to 7.37%. This change was
+	consistent through all fo the trials.
+  
+  5. Since the implementation of Bit_put has not been improved, what has
+     changed?
+  
+Answer:
+	We changed it from depth first to Breadth first search. We found that
+	Seq_addlo requires more checks, therefore spending more time in 
+	I/O. Whereas Seq_addhi doesn't take as much time. (Again, we're not 
+	positive if our numbers are supposed to be so similar, or if we should
+	have seen a greater discrepancy between the two methods.

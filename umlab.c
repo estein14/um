@@ -125,6 +125,8 @@ void build_verbose_halt_test(Seq_T stream)
 
 void build_add_halt_test(Seq_T stream)
 {
+    append(stream, loadval(r2, 10));
+    append(stream, loadval(r3, 7));
     append(stream, add(r1, r2, r3));
     append(stream, halt());
 }
