@@ -12,6 +12,7 @@ Memory Memory_new(FILE *fp, int num_instructions)
     main->segments = readFile(fp, num_instructions);
     main->reusable = Seq_new(0);
     main->pSize = num_instructions;
+    main->ID = 0;
 
     return main;
 }
@@ -23,25 +24,25 @@ void print_instructions(Memory memory, int num_instructions)
     for (int i = 0; i < num_instructions; i++) {
         printf("%x\n", array[i]);
     }
-    
+
 }
 
 void Memory_free(Memory memory)
 {
     assert(memory != NULL);
-    
+
     Seq_free(&(memory->reusable));
-    
+
     int length = Seq_length(memory->segments);
     for (int i = 0; i < length; i++) {
         if (Seq_get(memory->segments, i) != NULL) {
             free(Seq_get(memory->segments, i));
         }
     }
-    
+
     Seq_free(&(memory->segments));
     free(memory);
-    
+
 }
 
 /*
@@ -58,7 +59,7 @@ Seq_T readFile(FILE *fp, int num_instructions)
     uint32_t *segment = malloc(sizeof(uint32_t) * num_instructions);
     uint32_t word;
 
-    
+
     for (int i = 0; i < num_instructions; i++) {
         for (int j = 24; j >= 0; j-=8) {
             int c = getc(fp);
@@ -66,29 +67,44 @@ Seq_T readFile(FILE *fp, int num_instructions)
         }
         segment[i] = (uint32_t)word;
     }
-    
-    
-    int *x = Seq_addlo(obj, segment);
-    (void)x;
+
+
+    Seq_addlo(obj, segment);
 
 
     return obj;
 }
 
-void mapSegment(Memory memory, int hint)
+uint32_t mapSegment(Memory memory, int hint)
 {
-    
+
 
     //TODO: Check if reuasable elements are available
-    
-    
+
+    uint32_t id;
     uint32_t *segment = malloc(sizeof(uint32_t) * hint);
+
+    assert(segment != NULL);
+
+    //might be able to use calloc here? if we use calloc instead of malloc i think all the values are automatically set to 0
     for (int i = 0; i < hint; i++) {
         segment[i] = 0;
     }
-    
-    Seq_addhi(memory->segments, segment);
-    
+
+    if(Seq_length(memory->reusable) != 0) {
+        //double check. Think it should be remLo cause we are adding lo in unmapsegment?
+        id = (uint32_t)(uintptr_t)Seq_remlo(memory->reusable);
+        Seq_put(memory->segments, id, segment);
+    }
+
+    else {
+        Seq_addhi(memory->segments, segment);
+        memory->ID++;
+        id = memory->ID;
+    }
+
+    return id;
+
     // TODO: map bit pattern of non-zeros?
 
 }
@@ -101,8 +117,6 @@ void unmapSegment(Memory memory, uint32_t id)
     free(segment);
     Seq_put(memory->segments, id, NULL);
     Seq_addlo(memory->reusable, (void*)(uintptr_t)id);
-    
-    
 }
 
 
@@ -110,31 +124,23 @@ void unmapSegment(Memory memory, uint32_t id)
 // int main(int argc, char *argv[])
 // {
 //     (void)argc;
-// 
+//
 //     struct stat stats;
 //     stat(argv[1], &stats);
 //     int num_instructions = stats.st_size / 4;
-// 
+//
 //     FILE *fp = fopen(argv[1], "rb");
-// 
+//
 //     Memory object = Memory_new(fp, num_instructions);
-// 
+//
 //     print_instructions(object, num_instructions);
 //     unmapSegment(object, 0);
-// 
+//
 //     mapSegment(object, 10);
-// 
+//
 //     Memory_free(object);
-// 
-// 
-// 
+//
+//
+//
 //     return 0;
 // }
-
-
-
-
-
-
-
-

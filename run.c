@@ -1,29 +1,29 @@
 /*
     run.c
-    
+
     Written by: Emmett Stein (estein14), Noah Wright (nwrigh05)
-    
+
     Holds function definitions for running the actual while loop/program
 
 
  */
  #include "run.h"
- 
+
  typedef uint32_t Um_instruction;
  typedef enum Um_opcode {
-         CMOV = 0, SLOAD, SSTORE, ADD, MUL, DIV,
-         // NAND, HALT, ACTIVATE, INACTIVATE, OUT, IN, LOADP, LV
+         CMOV = 0, SLOAD, SSTORE, ADD, MUL, DIV, NAND, HALT, MAPSEG, UNMAPSEG,
+         OUT, IN, LOADP, LV
  } Um_opcode;
- 
- 
+
+
  Um_opcode getOpcode(uint32_t instruction)
  {
      Um_opcode instr = Bitpack_getu((uint64_t)instruction, 4, 28);
      return instr;
  }
- 
- 
- 
+
+
+
  void runProgram(Memory memory)
  {
      /* size and coutner */
@@ -35,21 +35,23 @@
      int rA;
      int rB;
      int rC;
+     int val;
      uint32_t *instructions = (uint32_t*)Seq_get(memory->segments, 0);
-     
+
      while (pcounter < num_instructions) {
 
         curr_instr = instructions[pcounter];
         code = getOpcode(curr_instr);
 
-        rA = Bitpack_getu((uint64_t)curr_instr, 3, 6);
-        rB = Bitpack_getu((uint64_t)curr_instr, 3, 3);
-        rC = Bitpack_getu((uint64_t)curr_instr, 3, 0);
-        
+        rA  = Bitpack_getu((uint64_t)curr_instr, 3, 6);
+        rB  = Bitpack_getu((uint64_t)curr_instr, 3, 3);
+        rC  = Bitpack_getu((uint64_t)curr_instr, 3, 0);
+        val = Bitpack_getu((uint64_t)curr_instr, 25, 0);
+
         printf("rA = %d, rB = %d, rC = %d\n", rA, rB, rC);
-        
+
         printf("%d\n", code);
-        
+
         switch(code)
         {
             case CMOV:
@@ -61,7 +63,7 @@
             case SSTORE:
                 segStore(memory, reg, rA, rB, rC);
                 break;
-            case ADD: 
+            case ADD:
                 addition(reg, rA, rB, rC);
                 break;
             case MUL:
@@ -70,18 +72,34 @@
             case DIV:
                 division(reg, rA, rB, rC);
                 break;
-            // case NAND:
-            // case HALT:
-            // case ACTIVATE:
-            // case INACTIVATE:
-            // case OUT:
-            // case IN:
-            // case LOADP:
-            // case LV:
-            
+            case NAND:
+                nand(reg, rA, rB, rC);
+                break;
+            case HALT:
+                halt(memory);
+                break;
+            case MAPSEG:
+                mapSeg(memory, reg, rB, rC);
+                break;
+            case UNMAPSEG:
+                unmapSeg(memory, reg, rC);
+                break;
+            case OUT:
+                output(reg, rC);
+                break;
+            case IN:
+                input(reg, rC);
+                break;
+            case LOADP:
+
+                break;
+            case LV:
+                loadVal(reg, val, rA);
+                break;
+
         }
      //increment counter
      pcounter++;
     }
-     
+
  }
