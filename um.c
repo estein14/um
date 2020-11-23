@@ -22,8 +22,7 @@ int main(int argc, char*argv[])
     }
 
     Memory mem = Memory_new(fp, num_instructions);
-
-    mapSeg(mem, NULL, 0, 0, 0);
+    
 
 
 //    print_instructions(mem, num_instructions);
@@ -32,11 +31,20 @@ int main(int argc, char*argv[])
 
     runProgram(mem);
 
-
-
-
-
-    Memory_free(mem);
     exit(EXIT_SUCCESS);
 
 }
+
+/*Checklist Tomorrow:
+* Finish function implementations
+        CHECK FUNCTIONALITY OF EACH INDIVIDUALLY
+* Boundary checking / program failures
+* 
+* 
+
+
+* Function Contracts
+* Readme
+
+
+ */

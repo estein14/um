@@ -37,6 +37,7 @@
      int rC;
      int val;
      uint32_t *instructions = (uint32_t*)Seq_get(memory->segments, 0);
+     int pcount;
 
      while (pcounter < num_instructions) {
 
@@ -91,7 +92,8 @@
                 input(reg, rC);
                 break;
             case LOADP:
-
+                pcount = loadProgram(memory, reg, rB, rC);
+                pcounter = pcount - 1;
                 break;
             case LV:
                 loadVal(reg, val, rA);

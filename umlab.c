@@ -36,21 +36,71 @@ Um_instruction loadval(unsigned ra, unsigned val);
 
 /* Wrapper functions for each of the instructions */
 
-static inline Um_instruction halt(void)
+typedef enum Um_register { r0 = 0, r1, r2, r3, r4, r5, r6, r7 } Um_register;
+
+static inline Um_instruction conditMove(Um_register a, Um_register b, Um_register c)
 {
-        return three_register(HALT, 0, 0, 0);
+    return three_register(0, a, b, c);
 }
 
-typedef enum Um_register { r0 = 0, r1, r2, r3, r4, r5, r6, r7 } Um_register;
+static inline Um_instruction segLoad(Um_register a, Um_register b, Um_register c)
+{
+    return three_register(SLOAD, a, b, c);
+}
+
+static inline Um_instruction segStore(Um_register a, Um_register b, Um_register c)
+{
+    return three_register(SSTORE, a, b, c);
+}
 
 static inline Um_instruction add(Um_register a, Um_register b, Um_register c)
 {
         return three_register(ADD, a, b, c);
 }
 
+static inline Um_instruction multiply(Um_register a, Um_register b, Um_register c)
+{
+        return three_register(MUL, a, b, c);
+}
+
+static inline Um_instruction division(Um_register a, Um_register b, Um_register c)
+{
+        return three_register(DIV, a, b, c);
+}
+
+static inline Um_instruction nand(Um_register a, Um_register b, Um_register c)
+{
+        return three_register(NAND, a, b, c);
+}
+
+static inline Um_instruction halt(void)
+{
+        return three_register(HALT, 0, 0, 0);
+}
+
+static inline Um_instruction mapseg(Um_register b, Um_register c)
+{
+        return three_register(ACTIVATE, 0, b, c);
+}
+
+static inline Um_instruction unmapSeg(Um_register c)
+{
+        return three_register(INACTIVATE, 0, 0, c);
+}
+
 static inline Um_instruction output(Um_register c)
 {
     return three_register(OUT, 0, 0, c);
+}
+
+static inline Um_instruction input(Um_register c)
+{
+    return three_register(IN, 0, 0, c);
+}
+
+static inline Um_instruction loadProgram(Um_register b, Um_register c)
+{
+    return three_register(LOADP, 0, b, c);
 }
 
 
@@ -141,3 +191,8 @@ void build_print_digit_test(Seq_T stream)
     append(stream, output(r3));
     append(stream, halt());
 }
+
+
+
+
+
