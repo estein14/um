@@ -88,13 +88,14 @@ void input(uint32_t *reg, int rC)
 
 int loadProgram(Memory memory, uint32_t *reg, int rB, int rC)
 {
+    fprintf(stderr, "%d\n", reg[rB]);
     // length + 1 somewhere??
     if (reg[rB] != 0) {
         /* Free old instructions */
         free(Seq_get(memory->segments, 0));
         /* length of new segment */
         uint32_t length = segLength(memory, reg[rB]);
-        
+        fprintf(stderr, "Length = %d\n", length);
         uint32_t *new = calloc(length, sizeof(uint32_t));
         assert(new != NULL);
         

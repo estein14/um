@@ -22,8 +22,6 @@
      return instr;
  }
 
-
-
  void runProgram(Memory memory)
  {
      /* size and coutner */
@@ -42,22 +40,12 @@
      while (pcounter < num_instructions) {
 
         curr_instr = instructions[pcounter];
-        code = getOpcode(curr_instr);
-
-        rA  = Bitpack_getu((uint64_t)curr_instr, 3, 6);
-        rB  = Bitpack_getu((uint64_t)curr_instr, 3, 3);
-        rC  = Bitpack_getu((uint64_t)curr_instr, 3, 0);
-        val = Bitpack_getu((uint64_t)curr_instr, 25, 0);
-        
-        // for (int i = 0; i < 8; i++) {
-        //     printf("%d ", reg[i]);
-        // }
-        // printf("\n");
-        // 
-        // printf("rA = %d, rB = %d, rC = %d\n", rA, rB, rC);
-        // 
-        // printf("%d\n", code);
-
+        code       = getOpcode(curr_instr);
+        rA         = Bitpack_getu((uint64_t)curr_instr, 3, 6);
+        rB         = Bitpack_getu((uint64_t)curr_instr, 3, 3);
+        rC         = Bitpack_getu((uint64_t)curr_instr, 3, 0);
+        val        = Bitpack_getu((uint64_t)curr_instr, 25, 0);
+    
         switch(code)
         {
             case CMOV:
@@ -102,13 +90,9 @@
                 break;
             case LV:
                 rA  = Bitpack_getu((uint64_t)curr_instr, 3, 25);
-                //printf("Load RA = %d\n", rA);
                 loadVal(reg, val, rA);
                 break;
-
         }
-     //increment counter
      pcounter++;
     }
-
  }

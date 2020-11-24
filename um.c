@@ -35,16 +35,16 @@ int main(int argc, char*argv[])
 
 }
 
-/*Checklist Tomorrow:
-* Finish function implementations
-        CHECK FUNCTIONALITY OF EACH INDIVIDUALLY
-* Boundary checking / program failures
-* 
-* 
-
-
-* Function Contracts
-* Readme
-
-
+/*
+ * Checklist Tomorrow:
+ * Unit testign for each function (thouroughly)
+ *   FAULIRE STUFF - edge cases 
+ * Put unit tests into file
+ * COMB OVER SPEC
+ * Function contracts
+ * Clean up code
+ * tabs and spaces and STYLE GUIDE
+ * README
+ * Final check and valgrind
+ * SUBMIT!!
  */

@@ -122,28 +122,3 @@ uint32_t segLength(Memory memory, uint32_t id)
     return *(uint32_t*)Seq_get(memory->segments, id);
 }
 
-
-
-// int main(int argc, char *argv[])
-// {
-//     (void)argc;
-//
-//     struct stat stats;
-//     stat(argv[1], &stats);
-//     int num_instructions = stats.st_size / 4;
-//
-//     FILE *fp = fopen(argv[1], "rb");
-//
-//     Memory object = Memory_new(fp, num_instructions);
-//
-//     print_instructions(object, num_instructions);
-//     unmapSegment(object, 0);
-//
-//     mapSegment(object, 10);
-//
-//     Memory_free(object);
-//
-//
-//
-//     return 0;
-// }
