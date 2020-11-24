@@ -274,7 +274,8 @@ void build_map_seg_2(Seq_T stream)
     append(stream, segLoad(r5, r6, r7));
     append(stream, output(r5));
     
-        
+    append(stream, loadval(r5, 2));
+    append(stream, unmapSeg(r5));
     
     append(stream, halt());
 }
@@ -289,8 +290,52 @@ void build_load_program(Seq_T stream)
     append(stream, halt());
 }
 
+void build_nand_test(Seq_T stream)
+{
+        append(stream, loadval(r0, 65537));
+        append(stream, loadval(r1, 65535));
+        append(stream, loadval(r2, 65528));
+        append(stream, loadval(r3, 65544));
+        append(stream, loadval(r7, '\n'));
 
+        append(stream, multiply(r4, r0, r1)); /* (2^32) - 1 */
+        append(stream, multiply(r5, r2, r3)); /* (2^32) - 64 */
 
+        append(stream, nand(r6, r4, r5)); /* r6 Should be 63 */
+        append(stream, output(r6)); /* Should print out ? */
+        append(stream, output(r7));
+        append(stream, halt());
+}
+
+static void add_label(Seq_T stream, int location_to_patch, int label_value)
+{
+	Um_instruction inst = get_inst(stream, location_to_patch);
+	unsigned k = Bitpack_getu(inst, 25, 0);
+	inst = Bitpack_newu(inst, 25, 0, label_value + k);
+	put_inst(stream, location_to_patch, inst);
+}
+
+static void emit_out_string(Seq_T stream, const char *s, int aux_reg)
+{
+        int string_length = strlen(s);
+        for (int i = 0; i < string_length; i++) {
+                char c = s[i];
+                append(stream, load_val(aux_reg, c));
+                append(stream, output(aux_reg));
+        }
+}
+
+void build_load_program2(Seq_T stream)
+{
+	int patch_L = Seq_length(stream);
+	append(stream, loadval(r7, 0));	     /* will be patched to 'r7 := L' */
+	append(stream, loadprogram(r0, r7));   /* should goto label L          */
+	emit_out_string(stream, "GOTO failed.\n", r1);
+	append(stream, halt());
+	/* define 'L' to be here */
+	add_label(stream, patch_L, Seq_length(stream));	
+	emit_out_string(stream, "GOTO passed.\n", r1);
+}
 
 
 

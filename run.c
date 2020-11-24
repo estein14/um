@@ -25,8 +25,7 @@
  void runProgram(Memory memory)
  {
      /* size and coutner */
-     uint32_t num_instructions = memory->pSize;
-     uint32_t pcounter = 0;
+     int pcounter = 0;
      uint32_t reg[8] = {0};
      Um_opcode code;
      Um_instruction curr_instr;
@@ -34,10 +33,11 @@
      int rB;
      int rC;
      int val;
-     uint32_t *instructions = (uint32_t*)Seq_get(memory->segments, 0);
+     Seg seg = Seq_get(memory->seg, 0);
+     uint32_t *instructions = seg->array;
      int pcount;
 
-     while (pcounter < num_instructions) {
+     while (pcounter < memory->pSize) {
 
         curr_instr = instructions[pcounter];
         code       = getOpcode(curr_instr);
@@ -87,6 +87,8 @@
             case LOADP:
                 pcount = loadProgram(memory, reg, rB, rC);
                 pcounter = pcount - 1;
+                seg = Seq_get(memory->seg, 0);
+                instructions = seg->array;
                 break;
             case LV:
                 rA  = Bitpack_getu((uint64_t)curr_instr, 3, 25);

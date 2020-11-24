@@ -17,6 +17,7 @@ extern void build_condit_move(Seq_T stream);
 extern void build_map_seg(Seq_T stream);
 extern void build_map_seg_2(Seq_T stream);
 extern void build_load_program(Seq_T stream);
+extern void build_nand_test(Seq_T stream);
 
 
 /* The array `tests` contains all unit tests for the lab. */
@@ -35,7 +36,8 @@ static struct test_info {
         { "condit-move",  NULL, "", build_condit_move },
         { "map-seg",      NULL, "", build_map_seg },
         { "map-seg2",     NULL, "", build_map_seg_2 },
-        { "load-program", NULL, "", build_load_program }
+        { "load-program", NULL, "", build_load_program },
+        { "nand-test",    NULL, "", build_nand_test }
 };
 
 

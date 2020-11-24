@@ -11,8 +11,9 @@ void conditMove(uint32_t *reg, int rA, int rB, int rC)
 void segLoad(Memory memory, uint32_t *reg, int rA, int rB, int rC)
 {
     // printf("In SegLoad\n");
-    uint32_t *segment = (uint32_t*)Seq_get(memory->segments, reg[rB]);
-    uint32_t word = segment[reg[rC]];
+    Seg seg = Seq_get(memory->seg, reg[rB]);
+    uint32_t *array = seg->array;
+    uint32_t word = array[reg[rC]];
     reg[rA] = word;
 
 }
@@ -20,8 +21,9 @@ void segLoad(Memory memory, uint32_t *reg, int rA, int rB, int rC)
 void segStore(Memory memory, uint32_t *reg, int rA, int rB, int rC)
 {
     // printf("In Segstore\n");
-    uint32_t *segment = (uint32_t*)Seq_get(memory->segments, reg[rA]);
-    segment[reg[rB]] = reg[rC];
+    Seg seg = Seq_get(memory->seg, reg[rA]);
+    uint32_t *array = seg->array;
+    array[reg[rB]] = reg[rC];
 
 }
 
@@ -64,7 +66,7 @@ void mapSeg(Memory memory, uint32_t *reg, int rB, int rC)
 void unmapSeg(Memory memory, uint32_t *reg, int rC)
 {
     // printf("In Unmap\n");
-    unmapSegment( memory, reg[rC]);
+    unmapSegment(memory, reg[rC]);
 }
 
 void output(uint32_t *reg, int rC)
@@ -88,28 +90,35 @@ void input(uint32_t *reg, int rC)
 
 int loadProgram(Memory memory, uint32_t *reg, int rB, int rC)
 {
-    fprintf(stderr, "%d\n", reg[rB]);
-    // length + 1 somewhere??
+    //fprintf(stderr, "%d\n", reg[rB]);
     if (reg[rB] != 0) {
+        
+        uint32_t length   = segLength(memory, reg[rB]);
+        Seg old           = Seq_get(memory->seg, reg[rB]);
+        uint32_t *old_arr = old->array;
+        
+        Seg seg           = malloc(sizeof(*seg));
+        uint32_t *new_arr = malloc(sizeof(uint32_t) * length);
+        assert(seg != NULL);
+        assert(new_arr != NULL);
+        
         /* Free old instructions */
-        free(Seq_get(memory->segments, 0));
-        /* length of new segment */
-        uint32_t length = segLength(memory, reg[rB]);
-        fprintf(stderr, "Length = %d\n", length);
-        uint32_t *new = calloc(length, sizeof(uint32_t));
-        assert(new != NULL);
-        
-        uint32_t *to_copy = (uint32_t*)Seq_get(memory->segments, reg[rB]);
-        
+        Seg old_ins             = Seq_get(memory->seg, 0);
+        uint32_t *old_arr_instr = old_ins->array;
+        free(old_arr_instr);
+        free(old_ins);
+                
         for (uint32_t i = 0; i < length; i++) {
-            new[i] = to_copy[i];
+            new_arr[i] = old_arr[i];
         }
         
-        Seq_put(memory->segments, 0, new);
+        seg->array = new_arr;
+        Seq_put(memory->seg, 0, seg);
+        
+        memory->pSize = length;
         
     } 
     return reg[rC];
-    
 }
 
 void loadVal(uint32_t *reg, uint32_t val, uint32_t rA)
