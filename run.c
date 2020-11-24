@@ -29,7 +29,7 @@
      /* size and coutner */
      uint32_t num_instructions = memory->pSize;
      uint32_t pcounter = 0;
-     uint32_t reg[8];
+     uint32_t reg[8] = {0};
      Um_opcode code;
      Um_instruction curr_instr;
      int rA;
@@ -48,10 +48,15 @@
         rB  = Bitpack_getu((uint64_t)curr_instr, 3, 3);
         rC  = Bitpack_getu((uint64_t)curr_instr, 3, 0);
         val = Bitpack_getu((uint64_t)curr_instr, 25, 0);
-
-        printf("rA = %d, rB = %d, rC = %d\n", rA, rB, rC);
-
-        printf("%d\n", code);
+        
+        // for (int i = 0; i < 8; i++) {
+        //     printf("%d ", reg[i]);
+        // }
+        // printf("\n");
+        // 
+        // printf("rA = %d, rB = %d, rC = %d\n", rA, rB, rC);
+        // 
+        // printf("%d\n", code);
 
         switch(code)
         {
@@ -96,6 +101,8 @@
                 pcounter = pcount - 1;
                 break;
             case LV:
+                rA  = Bitpack_getu((uint64_t)curr_instr, 3, 25);
+                //printf("Load RA = %d\n", rA);
                 loadVal(reg, val, rA);
                 break;
 

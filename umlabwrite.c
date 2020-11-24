@@ -13,6 +13,10 @@ extern void build_halt_test(Seq_T instructions);
 extern void build_verbose_halt_test(Seq_T instructions);
 extern void build_add_halt_test(Seq_T instructions);
 extern void build_print_digit_test(Seq_T instructions);
+extern void build_condit_move(Seq_T stream);
+extern void build_map_seg(Seq_T stream);
+extern void build_map_seg_2(Seq_T stream);
+extern void build_load_program(Seq_T stream);
 
 
 /* The array `tests` contains all unit tests for the lab. */
@@ -27,7 +31,11 @@ static struct test_info {
         { "halt",         NULL, "", build_halt_test },
         { "halt-verbose", NULL, "", build_verbose_halt_test },
         { "add",          NULL, "", build_add_halt_test },
-        { "print-six",    NULL, "6", build_print_digit_test }
+        { "print-six",    NULL, "6", build_print_digit_test },
+        { "condit-move",  NULL, "", build_condit_move },
+        { "map-seg",      NULL, "", build_map_seg },
+        { "map-seg2",     NULL, "", build_map_seg_2 },
+        { "load-program", NULL, "", build_load_program }
 };
 
 

@@ -192,6 +192,106 @@ void build_print_digit_test(Seq_T stream)
     append(stream, halt());
 }
 
+void build_condit_move(Seq_T stream)
+{
+    append(stream, loadval(0, 10));
+    append(stream, loadval(1, 35));
+    append(stream, loadval(2, 3));
+    append(stream, conditMove(0, 1, 2));
+    append(stream, output(0));
+    append(stream, halt());
+}
+
+void build_map_seg(Seq_T stream)
+{
+    append(stream, loadval(2, 10));
+    append(stream, mapseg(0, 2));
+    append(stream, loadval(2, 35));
+    append(stream, loadval(0, 1));
+    append(stream, loadval(1, 0));
+    append(stream, segStore(0, 1, 2));
+    append(stream, loadval(0, 0));
+    append(stream, loadval(1, 1));
+    append(stream, loadval(2, 0));
+    append(stream, segLoad(0, 1, 2));
+    append(stream, output(0));
+    append(stream, halt());
+}
+
+void build_map_seg_2(Seq_T stream)
+{
+    //make a new seg with 10 spots
+    append(stream, loadval(2, 10));
+    append(stream, mapseg(0, 2));
+    
+    //putting m[1][0] = 35
+    append(stream, loadval(2, 35));
+    append(stream, loadval(0, 1));
+    append(stream, loadval(1, 0));
+    append(stream, segStore(0, 1, 2));
+    
+    //map new segment with 7 spots
+    append(stream, loadval(2, 7));
+    append(stream, mapseg(0, 2));
+    
+    // puts m[2][3] = 36
+    append(stream, loadval(2, 36));
+    append(stream, loadval(0, 2));
+    append(stream, loadval(1, 3));
+    append(stream, segStore(0, 1, 2));
+    
+    //putting r[5] = m[2][3]
+    append(stream, loadval(r5, 0));
+    append(stream, loadval(r6, 2));
+    append(stream, loadval(r7, 3));
+    append(stream, segLoad(r5, r6, r7));
+    append(stream, output(r5));
+    
+    //putting r[0] = m[1][0]
+    append(stream, loadval(0, 0));
+    append(stream, loadval(1, 1));
+    append(stream, loadval(2, 0));
+    append(stream, segLoad(0, 1, 2));
+    append(stream, output(0));
+    
+    //unmap segment 1
+    append(stream, loadval(r4, 1));
+    append(stream, unmapSeg(r4));
+    
+    append(stream, loadval(r3, 6));
+    append(stream, mapseg(0, r3));
+    
+    // puts m[1][5] = 90
+    append(stream, loadval(r4, 1));
+    append(stream, loadval(r5, 5));
+    append(stream, loadval(r6, 90));
+    append(stream, segStore(r4, r5, r6));
+    
+    //putting r[2] = m[1][5]
+    append(stream, loadval(r5, 0));
+    append(stream, loadval(r6, 1));
+    append(stream, loadval(r7, 5));
+    append(stream, segLoad(r5, r6, r7));
+    append(stream, output(r5));
+    
+        
+    
+    append(stream, halt());
+}
+
+void build_load_program(Seq_T stream)
+{
+    append(stream, loadval(r3, 30));
+    append(stream, loadval(r4, 64));
+    append(stream, add(r1, r3, r4));
+    append(stream, output(r1));
+    
+    append(stream, halt());
+}
+
+
+
+
 
 
 

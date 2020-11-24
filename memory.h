@@ -31,6 +31,7 @@ void Memory_free(Memory memory);
 uint32_t mapSegment(Memory memory, int hint);
 void unmapSegment(Memory memory, uint32_t id);
 void print_instructions(Memory memory, int num_instructions);
+uint32_t segLength(Memory memory, uint32_t id);
 
 
 #endif

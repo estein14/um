@@ -10,18 +10,18 @@ void conditMove(uint32_t *reg, int rA, int rB, int rC)
 
 void segLoad(Memory memory, uint32_t *reg, int rA, int rB, int rC)
 {
-    printf("In SegLoad\n");
-    uint32_t *segment = (uint32_t*)Seq_get(memory->segments, rB);
-    uint32_t word = segment[rC];
+    // printf("In SegLoad\n");
+    uint32_t *segment = (uint32_t*)Seq_get(memory->segments, reg[rB]);
+    uint32_t word = segment[reg[rC]];
     reg[rA] = word;
-    printf("Done\n");
 
 }
 
 void segStore(Memory memory, uint32_t *reg, int rA, int rB, int rC)
 {
-    uint32_t *segment = (uint32_t*)Seq_get(memory->segments, rA);
-    segment[rB] = reg[rC];
+    // printf("In Segstore\n");
+    uint32_t *segment = (uint32_t*)Seq_get(memory->segments, reg[rA]);
+    segment[reg[rB]] = reg[rC];
 
 }
 
@@ -57,16 +57,19 @@ void halt(Memory memory)
 
 void mapSeg(Memory memory, uint32_t *reg, int rB, int rC)
 {
+    // printf("In Mapseg\n");
     reg[rB] = mapSegment(memory, reg[rC]);
 }
 
 void unmapSeg(Memory memory, uint32_t *reg, int rC)
 {
+    // printf("In Unmap\n");
     unmapSegment( memory, reg[rC]);
 }
 
 void output(uint32_t *reg, int rC)
 {
+    assert(reg[rC] <= 255);
     putchar(reg[rC]);
 }
 
@@ -85,14 +88,23 @@ void input(uint32_t *reg, int rC)
 
 int loadProgram(Memory memory, uint32_t *reg, int rB, int rC)
 {
+    // length + 1 somewhere??
     if (reg[rB] != 0) {
         /* Free old instructions */
         free(Seq_get(memory->segments, 0));
-        uint32_t *new_seg = (uint32_t*)Seq_get(memory->segments, reg[rB]);
-        Seq_put(memory->segments, 0, new_seg);
+        /* length of new segment */
+        uint32_t length = segLength(memory, reg[rB]);
         
-        //uint32_t length = *(uint32_t*)Seq_get(new_seg, reg[rB])
-        //TODO: Finish function
+        uint32_t *new = calloc(length, sizeof(uint32_t));
+        assert(new != NULL);
+        
+        uint32_t *to_copy = (uint32_t*)Seq_get(memory->segments, reg[rB]);
+        
+        for (uint32_t i = 0; i < length; i++) {
+            new[i] = to_copy[i];
+        }
+        
+        Seq_put(memory->segments, 0, new);
         
     } 
     return reg[rC];
@@ -101,6 +113,5 @@ int loadProgram(Memory memory, uint32_t *reg, int rB, int rC)
 
 void loadVal(uint32_t *reg, uint32_t val, uint32_t rA)
 {
-    printf("In load\n");
     reg[rA] = val;
 }

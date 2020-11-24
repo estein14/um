@@ -22,7 +22,7 @@ int main(int argc, char*argv[])
     }
 
     Memory mem = Memory_new(fp, num_instructions);
-    
+    fclose(fp);
 
 
 //    print_instructions(mem, num_instructions);
