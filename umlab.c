@@ -38,17 +38,20 @@ Um_instruction loadval(unsigned ra, unsigned val);
 
 typedef enum Um_register { r0 = 0, r1, r2, r3, r4, r5, r6, r7 } Um_register;
 
-static inline Um_instruction conditMove(Um_register a, Um_register b, Um_register c)
+static inline Um_instruction conditMove(Um_register a, Um_register b, 
+                                        Um_register c)
 {
     return three_register(0, a, b, c);
 }
 
-static inline Um_instruction segLoad(Um_register a, Um_register b, Um_register c)
+static inline Um_instruction segLoad(Um_register a, Um_register b, 
+                                     Um_register c)
 {
     return three_register(SLOAD, a, b, c);
 }
 
-static inline Um_instruction segStore(Um_register a, Um_register b, Um_register c)
+static inline Um_instruction segStore(Um_register a, Um_register b, 
+                                      Um_register c)
 {
     return three_register(SSTORE, a, b, c);
 }
@@ -58,12 +61,14 @@ static inline Um_instruction add(Um_register a, Um_register b, Um_register c)
         return three_register(ADD, a, b, c);
 }
 
-static inline Um_instruction multiply(Um_register a, Um_register b, Um_register c)
+static inline Um_instruction multiply(Um_register a, Um_register b, 
+                                      Um_register c)
 {
         return three_register(MUL, a, b, c);
 }
 
-static inline Um_instruction division(Um_register a, Um_register b, Um_register c)
+static inline Um_instruction division(Um_register a, Um_register b, 
+                                      Um_register c)
 {
         return three_register(DIV, a, b, c);
 }
@@ -160,24 +165,25 @@ void build_halt_test(Seq_T stream)
 
 void build_verbose_halt_test(Seq_T stream)
 {
-        append(stream, halt());
-        append(stream, loadval(r1, 'B'));
-        append(stream, output(r1));
-        append(stream, loadval(r1, 'a'));
-        append(stream, output(r1));
-        append(stream, loadval(r1, 'd'));
-        append(stream, output(r1));
-        append(stream, loadval(r1, '!'));
-        append(stream, output(r1));
-        append(stream, loadval(r1, '\n'));
-        append(stream, output(r1));
+    append(stream, halt());
+    append(stream, loadval(r1, 'B'));
+    append(stream, output(r1));
+    append(stream, loadval(r1, 'a'));
+    append(stream, output(r1));
+    append(stream, loadval(r1, 'd'));
+    append(stream, output(r1));
+    append(stream, loadval(r1, '!'));
+    append(stream, output(r1));
+    append(stream, loadval(r1, '\n'));
+    append(stream, output(r1));
 }
 
 void build_add_halt_test(Seq_T stream)
 {
-    append(stream, loadval(r2, 10));
-    append(stream, loadval(r3, 7));
+    append(stream, loadval(r2, 45));
+    append(stream, loadval(r3, 60));
     append(stream, add(r1, r2, r3));
+    append(stream, output(r1));
     append(stream, halt());
 }
 
@@ -280,64 +286,87 @@ void build_map_seg_2(Seq_T stream)
     append(stream, halt());
 }
 
-void build_load_program(Seq_T stream)
+void build_multiply_test(Seq_T stream)
 {
-    append(stream, loadval(r3, 30));
-    append(stream, loadval(r4, 64));
-    append(stream, add(r1, r3, r4));
-    append(stream, output(r1));
-    
+    append(stream, loadval(r3, 17));
+    append(stream, loadval(r6, 5));
+    append(stream, multiply(r2, r3, r6));
+    append(stream, output(r2)); //Should print upper-case 'U'
+    append(stream, halt());
+}
+
+void build_divide_test(Seq_T stream)
+{
+    append(stream, loadval(r3, 240));
+    append(stream, loadval(r6, 2));
+    append(stream, division(r2, r3, r6));
+    append(stream, output(r2)); //Should print upper-case 'x'
+    append(stream, halt());
+}
+
+void build_divide_0(Seq_T stream)
+{
+    append(stream, loadval(r3, 100));
+    append(stream, loadval(r4, 0));
+    append(stream, division(r1, r3, r4)); // cannot divide by 0
     append(stream, halt());
 }
 
 void build_nand_test(Seq_T stream)
 {
-        append(stream, loadval(r0, 65537));
-        append(stream, loadval(r1, 65535));
-        append(stream, loadval(r2, 65528));
-        append(stream, loadval(r3, 65544));
-        append(stream, loadval(r7, '\n'));
-
-        append(stream, multiply(r4, r0, r1)); /* (2^32) - 1 */
-        append(stream, multiply(r5, r2, r3)); /* (2^32) - 64 */
-
-        append(stream, nand(r6, r4, r5)); /* r6 Should be 63 */
-        append(stream, output(r6)); /* Should print out ? */
-        append(stream, output(r7));
-        append(stream, halt());
+    append(stream, loadval(r0, 65535));
+    append(stream, loadval(r1, 65537));
+    append(stream, multiply(r2, r0, r1)); 
+        
+    append(stream, loadval(r3, 65542));
+    append(stream, loadval(r4, 65530));
+    append(stream, multiply(r5, r4, r3)); 
+        
+    append(stream, nand(r6, r2, r5));
+    append(stream, output(r6)); /* print out # */
+    append(stream, halt());
 }
 
-static void add_label(Seq_T stream, int location_to_patch, int label_value)
+void build_load_program(Seq_T stream)
 {
-	Um_instruction inst = get_inst(stream, location_to_patch);
-	unsigned k = Bitpack_getu(inst, 25, 0);
-	inst = Bitpack_newu(inst, 25, 0, label_value + k);
-	put_inst(stream, location_to_patch, inst);
+    append(stream, loadval(r0, 100)); 
+    append(stream, nand(r0, r0, r0)); 
+    append(stream, loadval(r2, 35));
+
+    append(stream, loadval(r1, 0));
+    append(stream, loadval(r3, 1));
+    append(stream, loadval(r4, 6)); 
+
+    append(stream, loadval(r5, 11)); 
+    append(stream, output(r2));
+    append(stream, add(r0, r0, r3)); 
+    append(stream, conditMove(r5, r4, r0)); 
+    append(stream, loadProgram(r1, r5)); 
+
+    append(stream, halt());
 }
 
-static void emit_out_string(Seq_T stream, const char *s, int aux_reg)
+void build_50_mill(Seq_T stream)
 {
-        int string_length = strlen(s);
-        for (int i = 0; i < string_length; i++) {
-                char c = s[i];
-                append(stream, load_val(aux_reg, c));
-                append(stream, output(aux_reg));
-        }
+    append(stream, loadval(r0, 12499998)); 
+    append(stream, nand(r0, r0, r0)); 
+
+    append(stream, loadval(r1, 0));
+    append(stream, loadval(r3, 1));
+    append(stream, loadval(r4, 5)); 
+
+    append(stream, loadval(r5, 9)); 
+    append(stream, add(r0, r0, r3)); 
+    append(stream, conditMove(r5, r4, r0)); 
+    append(stream, loadProgram(r1, r5)); 
+
+    append(stream, halt());
 }
 
-void build_load_program2(Seq_T stream)
+void build_test_input(Seq_T stream)
 {
-	int patch_L = Seq_length(stream);
-	append(stream, loadval(r7, 0));	     /* will be patched to 'r7 := L' */
-	append(stream, loadprogram(r0, r7));   /* should goto label L          */
-	emit_out_string(stream, "GOTO failed.\n", r1);
-	append(stream, halt());
-	/* define 'L' to be here */
-	add_label(stream, patch_L, Seq_length(stream));	
-	emit_out_string(stream, "GOTO passed.\n", r1);
+    append(stream, input(r2));
+    append(stream, output(r2));
+    append(stream, halt());
 }
-
-
-
-
 

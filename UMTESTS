@@ -1,0 +1,14 @@
+halt.um
+halt-verbose.um
+input.um
+add.um
+print-six.um
+condit-move.um
+map-seg.um
+map-seg2.um
+multiply.um
+divide.um
+divide-0.um
+nand.um
+load-program.um
+50-mill.um

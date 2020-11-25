@@ -1,3 +1,13 @@
+/*
+    um.c 
+    
+    Written by: Emmett Stein (estein14), Noah Wright (nwrigh05)
+
+    Purpose: Holds the main for the entire program. Calls the memory program
+             with the file pointer, then calls the run program to execute 
+             each instruction. Then exits. (Memory is deleted in halt because
+             every program ends with halt)
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "memory.h"
@@ -12,9 +22,9 @@ int main(int argc, char*argv[])
 
     struct stat stats;
     stat(argv[1], &stats);
+    
     int num_instructions = stats.st_size / 4;
-
-    FILE *fp = fopen(argv[1], "rb");
+    FILE *fp             = fopen(argv[1], "rb");
 
     if (fp == NULL) {
         fprintf(stderr, "Could not open file.\n");
@@ -22,29 +32,12 @@ int main(int argc, char*argv[])
     }
 
     Memory mem = Memory_new(fp, num_instructions);
+    
     fclose(fp);
-
-
-//    print_instructions(mem, num_instructions);
-
-
-
-    runProgram(mem);
-
+    
+    int halt = runProgram(mem);
+    if (halt) {
+        Memory_free(mem);
+    }
     exit(EXIT_SUCCESS);
-
 }
-
-/*
- * Checklist Tomorrow:
- * Unit testign for each function (thouroughly)
- *   FAULIRE STUFF - edge cases 
- * Put unit tests into file
- * COMB OVER SPEC
- * Function contracts
- * Clean up code
- * tabs and spaces and STYLE GUIDE
- * README
- * Final check and valgrind
- * SUBMIT!!
- */

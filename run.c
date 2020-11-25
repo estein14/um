@@ -4,48 +4,52 @@
     Written by: Emmett Stein (estein14), Noah Wright (nwrigh05)
 
     Holds function definitions for running the actual while loop/program
-
-
  */
- #include "run.h"
+#include "run.h"
 
- typedef uint32_t Um_instruction;
- typedef enum Um_opcode {
-         CMOV = 0, SLOAD, SSTORE, ADD, MUL, DIV, NAND, HALT, MAPSEG, UNMAPSEG,
-         OUT, IN, LOADP, LV
- } Um_opcode;
+typedef uint32_t Um_instruction;
+typedef enum Um_opcode {
+    CMOV = 0, SLOAD, SSTORE, ADD, MUL, DIV, NAND, HALT, MAPSEG, UNMAPSEG,
+    OUT, IN, LOADP, LV
+} Um_opcode;
 
+/*
+    Arguments: bitpacked uint32_t instruction word
+    Prupose: extracts the left most 4 bits ie. the OP code.
+    Return: the extracted Um_opcode
+    Invariants: none
+ */
+Um_opcode getOpcode(uint32_t instruction)
+{
+    Um_opcode instr = Bitpack_getu((uint64_t)instruction, 4, 28);
+    return instr;
+}
 
- Um_opcode getOpcode(uint32_t instruction)
- {
-     Um_opcode instr = Bitpack_getu((uint64_t)instruction, 4, 28);
-     return instr;
- }
+/*
+    Arguments: Main memory structure
+    Prupose: Iterates through the instructions of the 0th segment 
+             and runs the corresponding instruction from each bitpacked
+             word. 
+    Return: void
+    Invariants: none
+ */
+int runProgram(Memory memory)
+{
+    int pcounter           = 0;
+    uint32_t reg[8]        = {0};
+    Seg seg                = Seq_get(memory->seg, 0);
+    uint32_t *instructions = seg->array;
+    Um_opcode code;
+    Um_instruction curr_instr;
+    int rA, rB, rC, val, pcount;
 
- void runProgram(Memory memory)
- {
-     /* size and coutner */
-     int pcounter = 0;
-     uint32_t reg[8] = {0};
-     Um_opcode code;
-     Um_instruction curr_instr;
-     int rA;
-     int rB;
-     int rC;
-     int val;
-     Seg seg = Seq_get(memory->seg, 0);
-     uint32_t *instructions = seg->array;
-     int pcount;
-
-     while (pcounter < memory->pSize) {
-
+    while (pcounter < memory->pSize) {
         curr_instr = instructions[pcounter];
         code       = getOpcode(curr_instr);
         rA         = Bitpack_getu((uint64_t)curr_instr, 3, 6);
         rB         = Bitpack_getu((uint64_t)curr_instr, 3, 3);
         rC         = Bitpack_getu((uint64_t)curr_instr, 3, 0);
         val        = Bitpack_getu((uint64_t)curr_instr, 25, 0);
-    
         switch(code)
         {
             case CMOV:
@@ -70,8 +74,7 @@
                 nand(reg, rA, rB, rC);
                 break;
             case HALT:
-                halt(memory);
-                break;
+                return 1;
             case MAPSEG:
                 mapSeg(memory, reg, rB, rC);
                 break;
@@ -95,6 +98,7 @@
                 loadVal(reg, val, rA);
                 break;
         }
-     pcounter++;
+    pcounter++;
     }
- }
+    return 0;
+}

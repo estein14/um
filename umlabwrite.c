@@ -16,8 +16,13 @@ extern void build_print_digit_test(Seq_T instructions);
 extern void build_condit_move(Seq_T stream);
 extern void build_map_seg(Seq_T stream);
 extern void build_map_seg_2(Seq_T stream);
-extern void build_load_program(Seq_T stream);
+extern void build_multiply_test(Seq_T stream);
+extern void build_divide_test(Seq_T stream);
+extern void build_divide_0(Seq_T stream);
 extern void build_nand_test(Seq_T stream);
+extern void build_load_program(Seq_T stream);
+extern void build_50_mill(Seq_T stream);
+extern void build_test_input(Seq_T stream);
 
 
 /* The array `tests` contains all unit tests for the lab. */
@@ -31,13 +36,18 @@ static struct test_info {
 } tests[] = {
         { "halt",         NULL, "", build_halt_test },
         { "halt-verbose", NULL, "", build_verbose_halt_test },
-        { "add",          NULL, "", build_add_halt_test },
+        { "input",        "H",  "H",build_test_input },
+        { "add",          NULL, "i", build_add_halt_test },
         { "print-six",    NULL, "6", build_print_digit_test },
-        { "condit-move",  NULL, "", build_condit_move },
-        { "map-seg",      NULL, "", build_map_seg },
-        { "map-seg2",     NULL, "", build_map_seg_2 },
-        { "load-program", NULL, "", build_load_program },
-        { "nand-test",    NULL, "", build_nand_test }
+        { "condit-move",  NULL, "#", build_condit_move },
+        { "map-seg",      NULL, "#", build_map_seg },
+        { "map-seg2",     NULL, "$#Z", build_map_seg_2 },
+        { "multiply",     NULL, "U", build_multiply_test },
+        { "divide",       NULL, "x", build_divide_test },
+        { "divide-0",     NULL, "", build_divide_0 },
+        { "nand",         NULL, "#", build_nand_test },
+        { "load-program", NULL, "#####################################################################################################", build_load_program },
+        { "50-mill",      NULL, "", build_50_mill }
 };
 
 

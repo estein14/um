@@ -1,0 +1,111 @@
+README
+Emmett Stein (estein14)
+Noah Wright (nwrigh05)
+UM
+
+Names:
+    Emmett Stein (estein14)
+    Noah Wright (nwrigh05)
+
+Help:
+    All the work is our own. We asked the TA's in halligan helper for 
+    a couple of questions we had, but they mostly pointed us in the right
+    direction in the spec.
+    
+Correctly implemented:
+    To our knowledge everything should be fully functional.
+    
+Departures from design:
+    We used everything from our design, only changing one things.
+    instead of the main memory being a sequence of arrays, we changed it to a 
+    sequence of structs that contain the array and the length of the array
+    to use in load_program.
+
+Architecture of System:
+    Main memory architecture:
+        * Main memory struct:
+            * Hanson Sequence of seg structs
+                * seg structs include:
+                    * the uint32_t array of words
+                    * int length of that array
+        * int instruction size
+        * int ID counter to keep track of
+        
+    Run_program:
+        * array of registers (uint32_t)
+        * While loop (while our program counter is less than instruction size)
+            * switch statement to find correct function based on opcode 
+                * Calls appropriate function for each case
+                
+    Main:
+        * Reads in file to New memory struct (malloc)
+        * calls run program with memory structure
+        * deletes memory
+        * exits successfully
+        
+Time to execute 50 Million instructions:
+    It takes our program about 1.771 seconds. We wrote a program that loops
+    12499998 times (and executes 4 instructions per loop), so in total its
+    roughly 50-million instructions. (NOTE: the instructions don't store
+    memory, so it will definitely take longer for a program that does 50 
+    million instructions that all store and retrieve memory)
+
+UM tests:
+    * Halt:
+        Tests the halt functionality by simply calling halt
+    * Halt-Verbose:
+        Tests halt by calling halt with more instructions after. If halt 
+        doesn't work it will print out "BAD!"
+    * input:
+        Simply takes in a single input character and then prints out the exact
+        same character.
+    * print-six:
+        Tests our output function by loading a value and then outputting it 
+    * add:
+        Tests our add and output functions by adding together two numbers and 
+        outputting correct sum (Should be 'i')
+    * condit-move:
+        Tests our conditional move function by loading values and then
+        calling conditional move. If correct, should print out '#'
+    * Map-seg:
+        Tests: Map Segment, Load Segment, Store segment
+        Maps a new segment, and then stores something into that segment, then 
+        retrieves it and prints it. If correct should print out "#"
+    * Map-seg2
+        Tests: Map Segment, Load Segment, Store segment, unmap segment
+            (Also tests our reusable Sequence of ID's)
+        Maps a couple new segments, loads some values into those segments, Then
+        deletes one of the segments, then stores another value (should be in 
+        the deleted segment place). If correct, should print out "$#Z"
+    * Multiply
+        Tests our multiply function by multiplying two numbers together and
+        printing out the output.
+    * Divide
+        Tests our divide function by dividing two numbers together and
+        printing out the output.
+    * divide-0
+        Ensures that we get a floating exception when we try to multiply by 0
+    * nand
+        Tests our nand function by loading two values (multiplying together to 
+        get a large value thats 32 bits), and then nands the two huge values.
+        The output should be '#' if correct
+    * load-program
+        Tests our load program and conditional move function by running a 
+        loop 100 times and printing '#' for each iteration. Each time 
+        load program is being called, it sets the instruction counter back to
+        the beginning of the loop until the 100th iteration where the 
+        instruction counter is set execute the halt command. 
+    * 50-mill
+        Executes ~50 million instructions to see how long it takes (roughly
+        1.78 seconds)
+
+Time spent on project
+    * Spent analyzing: ~4 hours
+    * Spent preparing our design: ~6 hours
+    * Spent solving the problem: ~20 hours
+
+
+
+
+
+    
